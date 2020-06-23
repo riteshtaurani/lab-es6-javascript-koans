@@ -308,27 +308,28 @@ describe("arrow functions. ", () => {
 
   it("many params require parens", () => {
     /* let func = ........;*/
-    // expect(func(23,42)).toEqual(23+42)
+    let func = (num1,num2) => num1+num2
+    expect(func(23,42)).toEqual(23+42)
   });
 
   it("body needs parentheses to return an object", () => {
-    let func = () => {
-      iAm: "an object";
-    };
-    // expect(func()).toEqual({iAm: 'an object'});
+    let func = () => ({
+      iAm:"an object",
+    });
+    expect(func()).toEqual({iAm: 'an object'});
   });
 
   class LexicallyBound {
     getFunction() {
       /* changes could come here... */
-      return function() {
-        return this;
-      };
-    }
+      return () => {  
+        return this;                 
+      }
+  }
 
     getArgumentsFunction() {
       /* ... and here */
-      return () => {
+      return function() {
         return arguments;
       }; /*or here*/
     }
@@ -341,7 +342,7 @@ describe("arrow functions. ", () => {
 
       /* HINT: nothing should change here... ^ */
 
-      // expect(fn()).toBe(bound);
+      expect(fn()).toBe(bound);
     });
 
     it("`arguments` doesnt work inside arrow functions", function() {
@@ -350,7 +351,7 @@ describe("arrow functions. ", () => {
 
       /* HINT: nothing should change here... ^ */
 
-      // expect(fn(1, 2).length).toEqual(2);
+      expect(fn(1, 2).length).toEqual(2);
     });
   });
 });
@@ -358,17 +359,17 @@ describe("arrow functions. ", () => {
 describe("destructuring function parameters. ", () => {
   describe("destruct parameters", () => {
     it("multiple params from object", () => {
-      const fn = (/* { ???? } */) => {
-        // expect(id).toEqual(42);
-        // expect(name).toEqual("Wolfram");
+      const fn = ( {id,name} ) => {
+        expect(id).toEqual(42);
+        expect(name).toEqual("Wolfram");
       };
       const user = { name: "Wolfram", id: 42 };
       fn(user);
     });
 
     it("multiple params from array/object", () => {
-      const fn = (/* [????] */) => {
-        // expect(name).toBe("Alice");
+      const fn = ([{},{name}] ) => {
+        expect(name).toBe("Alice");
       };
       const users = [{ name: "nobody" }, { name: "Alice", id: 42 }];
       fn(users);
@@ -377,9 +378,9 @@ describe("destructuring function parameters. ", () => {
 
   describe("default values", () => {
     it("for simple values", () => {
-      const fn = (id, name) => {
-        // expect(id).toEqual(23);
-        // expect(name).toEqual('Bob');
+      const fn = (id = 23, name = 'Bob') => {
+        expect(id).toEqual(23);
+        expect(name).toEqual('Bob');
       };
       fn(23);
     });
@@ -387,62 +388,62 @@ describe("destructuring function parameters. ", () => {
     it("for a missing array value", () => {
       const defaultUser = { id: 23, name: "Joe" };
       const fn = ([user]) => {
-        // expect(user).toEqual(defaultUser);
+        expect(user).toEqual(defaultUser);
       };
-      fn([]);
+      fn([defaultUser]);
     });
 
     it("mix of parameter types", () => {
-      const fn = (id, [arr], { obj }) => {
-        // expect(id).toEqual(1);
-        // expect(arr).toEqual(2);
-        // expect(obj).toEqual(3);
+      const fn = (id, [arr], { obj = 3 }) => {
+        expect(id).toEqual(1);
+        expect(arr).toEqual(2);
+        expect(obj).toEqual(3);
       };
-      fn(undefined, [], {});
+      fn(1, [2], {});
     });
   });
 });
 
 describe("spread with arrays. ", () => {
   it("spread every element of an array", () => {
-    const [all] = [1, 2, 3, 4];
-    // expect(all).toEqual([1, 2, 3, 4]);
+    const [...all] = [1, 2, 3, 4];
+    expect(all).toEqual([1, 2, 3, 4]);
   });
 
   it("spread rest of an array to a variable", () => {
-    const [butTheFirst] = [1, 2, 3, 4];
-    // expect(butTheFirst).toEqual([2, 3, 4]);
+    const [,...butTheFirst] = [1, 2, 3, 4];
+    expect(butTheFirst).toEqual([2, 3, 4]);
   });
 
   it("extracts each array item", function() {
-    const [] = [...[1, 2]];
-    // expect(a).toEqual(1);
-    // expect(b).toEqual(2);
+    const [a,b] = [...[1, 2]];
+    expect(a).toEqual(1);
+    expect(b).toEqual(2);
   });
 
   it("in combination with rest", function() {
-    const [a, b, ...theRest] = [...[0, 1, 2, 3, 4, 5]];
-    // expect(a).toEqual(1);
-    // expect(b).toEqual(2);
-    // expect(theRest).toEqual([3, 4, 5]);
+    const [,a , b , ...theRest] = [...[0, 1, 2, 3, 4, 5]];
+    expect(a).toEqual(1);
+    expect(b).toEqual(2);
+    expect(theRest).toEqual([3, 4, 5]);
   });
 
   it("spreading into the rest", function() {
-    const [...rest] = [...[, 1, 2, 3, 4, 5]];
-    // expect(rest).toEqual([1, 2, 3, 4, 5]);
+    const [,...rest] = [...[, 1, 2, 3, 4, 5]];
+    expect(rest).toEqual([1, 2, 3, 4, 5]);
   });
 });
 
 describe("spread with strings", () => {
   it("simply spread each char of a string", function() {
-    const [b, a] = ["xy"];
-    // expect(a).toEqual("y");
-    // expect(b).toEqual("x");
+    const [b, a] = [..."xy"];
+    expect(a).toEqual("y");
+    expect(b).toEqual("x");
   });
 
   it("works anywhere inside an array (does not have to be last)", function() {
     const letters = ["a", "bcd", "e", "f"];
-    // expect(letters.length).toEqual(6);
+    expect(letters.length).toEqual(6);
   });
 });
 
